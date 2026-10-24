@@ -1,10 +1,7 @@
 ﻿namespace Product.Infrastructure.Repositories;
-
 using Microsoft.EntityFrameworkCore;
 using Product.Application.Interface;
 using Product.Infrastructure.persistance;
-
-
 public class ProductRepository : IProductRepository
 {
     private readonly AppDbContext _context;
