@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting.Server;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Product.Application.Command;
 using Product.Application.Dtos;
 using Product.Application.Queries;
-using System.ComponentModel.DataAnnotations;
 using MediatR;
+using FluentValidation;
 
 namespace Product.Api.Controllers
 {
@@ -18,10 +18,11 @@ namespace Product.Api.Controllers
         {
             _sender = sender;
         }
+
         [HttpPost]
         public async Task<ActionResult<ProductDto>> Create(
-        CreateProductCommand command,
-        CancellationToken cancellationToken)
+            CreateProductCommand command,
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -37,7 +38,7 @@ namespace Product.Api.Controllers
             {
                 return BadRequest(new
                 {
-                    errors = ex.Error.Select(e => new
+                    errors = ex.Errors.Select(e => new
                     {
                         field = e.PropertyName,
                         message = e.ErrorMessage
@@ -62,7 +63,12 @@ namespace Product.Api.Controllers
             CancellationToken cancellationToken)
         {
             if (id <= 0)
-                return BadRequest(new { message = "Id must be positive." });
+            {
+                return BadRequest(new
+                {
+                    message = "Id must be positive."
+                });
+            }
 
             var product = await _sender.Send(
                 new GetProductByIdQuery(id), cancellationToken);
@@ -73,7 +79,4 @@ namespace Product.Api.Controllers
             return Ok(product);
         }
     }
-
-
 }
-
